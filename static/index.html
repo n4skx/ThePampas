@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>HiddenClub</title>
+
+    <!-- META -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SCRIPTs -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#121212] text-[#FFF] placeholder-[#FFF] min-h-screen min-w-full">
+    <div class="main-content min-h-screen min-w-full flex justify-center items-center">
+        <form id="registrationForm">
+            <input 
+                id="username"
+                name="username"
+                type="text" 
+                placeholder="Put a username here..." 
+                maxlength="30"
+                class="h-[30px] w-[250px] bg-[#202020] border-[1px] border-transparent font-semibold rounded-lg outline-none pl-2 transition delay-150 hover:bg-[#181818]">
+        </form>
+    </div>
+
+    <script>
+        
+        const SimpleChat = class {
+            constructor(websocket_host, websocket_path) {
+                this.ws = new WebSocket(`ws://${websocket_host}${websocket_path}`);
+
+                this.ws_host = websocket_host;
+            }
+
+            // Helpers
+            sendJsonFrame(obj) {
+                this.ws.send(JSON.stringify(obj));
+            }
+
+            prepareLogin(entries) {
+                this.sendJsonFrame({
+                    "packet_type": "join",
+                    "packet_data": entries
+                });
+            }
+        }
+        
+        const chat = new SimpleChat(window.location.host, "/ws");
+        
+        document.getElementById("registrationForm").onsubmit = ((e) => {
+            e.preventDefault();
+            
+            // Data
+            var formData = new FormData(e.target);
+            
+            chat.prepareLogin(Object.fromEntries(formData));
+        });
+        
+    </script>
+</body>
+</html>
